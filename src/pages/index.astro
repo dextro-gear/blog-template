@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FeaturedCard from '../components/FeaturedCard.astro';
+import JournalCard from '../components/JournalCard.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig } from '../config';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Sort chronologically descending
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Get featured post (or first post if none marked featured)
+const featuredPost = sortedPosts.find((p) => p.data.featured) || sortedPosts[0];
+
+// Get recent journal entries (excluding the featured one)
+const recentPosts = sortedPosts
+  .filter((p) => p.slug !== featuredPost.slug)
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title={siteConfig.title}
+  description={siteConfig.description}
+  currentPath="/"
+>
+  <div class="home-page">
+    <!-- Hero Header -->
+    <header class="home-hero">
+      <h1 class="author-name">{siteConfig.author}</h1>
+      <p class="author-tagline">{siteConfig.tagline}</p>
+    </header>
+
+    <!-- Featured Essay Section -->
+    {featuredPost && (
+      <section class="home-section featured-section">
+        <h2 class="section-label">FEATURED ESSAY</h2>
+        <FeaturedCard post={featuredPost} />
+      </section>
+    )}
+
+    <!-- Recent Journal Entries Section -->
+    <section class="home-section journal-section">
+      <h2 class="section-label">RECENT JOURNAL ENTRIES</h2>
+      <div class="journal-grid">
+        {recentPosts.map((post) => (
+          <JournalCard post={post} />
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .home-page {
+    display: flex;
+    flex-direction: column;
+    gap: 4.25rem;
+  }
+
+  .home-hero {
+    margin-top: 0.5rem;
+    max-width: 720px;
+  }
+
+  .author-name {
+    font-family: var(--font-serif);
+    font-size: 3.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .author-tagline {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1.68;
+    color: var(--text-secondary);
+  }
+
+  .home-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .journal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 1024px) {
+    .journal-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 680px) {
+    .author-name {
+      font-size: 2.4rem;
+    }
+    .author-tagline {
+      font-size: 1.1rem;
+    }
+    .journal-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

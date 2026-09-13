@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../utils/date';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+
+// Shorten "4 min read" to "4 min" for compact journal card if present, or keep readTime
+const compactTime = post.data.readTime.replace(' read', '');
+---
+
+<article class="journal-card paper-card">
+  <div class="card-meta">
+    <span class="meta-date-time">{formatDate(post.data.pubDate)} &bull; {compactTime} &bull;</span>
+    <span class="badge-tag">{post.data.tag}</span>
+  </div>
+
+  <h4 class="card-title">
+    <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+  </h4>
+
+  <p class="card-desc">{post.data.description}</p>
+</article>
+
+<style>
+  .journal-card {
+    padding: 1.6rem 1.65rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    height: 100%;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    flex-wrap: wrap;
+  }
+
+  .meta-date-time {
+    letter-spacing: 0.02em;
+    color: var(--text-subtle);
+  }
+
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1.22rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .card-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .card-title a:hover {
+    color: var(--accent-terracotta);
+  }
+
+  .card-desc {
+    font-family: var(--font-serif);
+    font-size: 0.925rem;
+    line-height: 1.58;
+    color: var(--text-secondary);
+    margin-top: auto;
+  }
+</style>

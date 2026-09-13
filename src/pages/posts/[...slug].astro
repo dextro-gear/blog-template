@@ -1,0 +1,212 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GiscusComments from '../../components/GiscusComments.astro';
+import { siteConfig } from '../../config';
+import { formatDate } from '../../utils/date';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const sortedPosts = posts.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  return sortedPosts.map((post, index) => {
+    const prevPost = index < sortedPosts.length - 1 ? sortedPosts[index + 1] : null;
+    const nextPost = index > 0 ? sortedPosts[index - 1] : null;
+
+    return {
+      params: { slug: post.slug },
+      props: { post, prevPost, nextPost },
+    };
+  });
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BaseLayout
+  title={`${post.data.title} — Thomas Miller`}
+  description={post.data.description}
+  currentPath="/archive"
+>
+  <article class="post-detail">
+    <!-- Back link -->
+    <nav class="post-breadcrumb">
+      <a href="/archive" class="back-link">
+        <span class="arrow">&larr;</span> Back to archive
+      </a>
+    </nav>
+
+    <!-- Post Header -->
+    <header class="post-header">
+      <div class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()} class="mono-meta">
+          {formatDate(post.data.pubDate)}
+        </time>
+        <span class="meta-sep">&bull;</span>
+        <span class="mono-meta">{post.data.readTime}</span>
+        <span class="meta-sep">&bull;</span>
+        <span class="badge-tag">{post.data.tag}</span>
+      </div>
+
+      <h1 class="post-title">{post.data.title}</h1>
+      <p class="post-summary">{post.data.description}</p>
+    </header>
+
+    <div class="post-divider"></div>
+
+    <!-- Article Content -->
+    <div class="prose post-body">
+      <Content />
+    </div>
+
+    <div class="post-divider"></div>
+
+    <!-- Navigation between posts -->
+    <nav class="post-navigation">
+      {prevPost ? (
+        <a href={`/posts/${prevPost.slug}`} class="nav-card prev-card paper-card">
+          <span class="nav-dir-label">&larr; Previous</span>
+          <span class="nav-card-title">{prevPost.data.title}</span>
+        </a>
+      ) : <div />}
+
+      {nextPost && (
+        <a href={`/posts/${nextPost.slug}`} class="nav-card next-card paper-card">
+          <span class="nav-dir-label">Next &rarr;</span>
+          <span class="nav-card-title">{nextPost.data.title}</span>
+        </a>
+      )}
+    </nav>
+
+    <!-- Comments & Discussion (Giscus) -->
+    {siteConfig.giscus?.enabled && (post.data.comments ?? true) && (
+      <GiscusComments />
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .post-detail {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .post-breadcrumb {
+    margin-bottom: 2.5rem;
+  }
+
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--accent-terracotta);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: transform 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--accent-terracotta-hover);
+    transform: translateX(-3px);
+  }
+
+  .post-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-subtle);
+    flex-wrap: wrap;
+  }
+
+  .meta-sep {
+    color: var(--text-subtle);
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+
+  .post-summary {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .post-divider {
+    height: 1px;
+    background-color: var(--border-muted);
+    margin: 2.75rem 0;
+  }
+
+  .post-body {
+    width: 100%;
+  }
+
+  .post-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .nav-card {
+    padding: 1.4rem 1.5rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .nav-dir-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-terracotta);
+  }
+
+  .nav-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-primary);
+  }
+
+  .next-card {
+    text-align: right;
+  }
+
+  @media (max-width: 640px) {
+    .post-title {
+      font-size: 2.1rem;
+    }
+    .post-summary {
+      font-size: 1.05rem;
+    }
+    .post-navigation {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

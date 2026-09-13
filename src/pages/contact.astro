@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contact — Thomas Miller"
+  description="Quiet channels for correspondence, thoughtful notes, and inquiry."
+  currentPath="/contact"
+>
+  <div class="contact-page">
+    <header class="page-header">
+      <span class="section-label">CORRESPONDENCE</span>
+      <h1 class="page-title">Contact</h1>
+      <p class="page-subtitle">
+        I welcome deliberate letters, reflections on essays, and notes on craftsmanship. Because I treat attention as a non-renewable resource, I batch replies weekly.
+      </p>
+    </header>
+
+    <div class="divider"></div>
+
+    <div class="contact-grid">
+      <!-- Direct Electronic Mail -->
+      <div class="contact-card paper-card">
+        <span class="card-mono-label">ELECTRONIC MAIL</span>
+        <h3 class="card-headline">Direct Letter</h3>
+        <p class="card-text">
+          For correspondence, essay feedback, or quiet discourse:
+        </p>
+        <a href="mailto:thomas@example.com" class="contact-action-link">
+          thomas@example.com &rarr;
+        </a>
+      </div>
+
+      <!-- RSS Feed -->
+      <div class="contact-card paper-card">
+        <span class="card-mono-label">SYNDICATION</span>
+        <h3 class="card-headline">RSS Feed</h3>
+        <p class="card-text">
+          Subscribe in your reader of choice without algorithms or tracked clicks:
+        </p>
+        <a href="/rss.xml" class="contact-action-link">
+          /rss.xml &rarr;
+        </a>
+      </div>
+
+      <!-- Public Key -->
+      <div class="contact-card paper-card full-width">
+        <span class="card-mono-label">SECURITY & VERIFICATION</span>
+        <h3 class="card-headline">OpenPGP Fingerprint</h3>
+        <p class="card-text">
+          If you wish to send encrypted messages or verify releases:
+        </p>
+        <code class="pgp-code">
+          4E89 1C23 99B0 51F7 8392  DA54 62F1 8C70 4E21 9B76
+        </code>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+  }
+
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+
+  .page-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--border-muted);
+    margin: 2.5rem 0;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .contact-card {
+    padding: 1.85rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contact-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .card-mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent-terracotta);
+  }
+
+  .card-headline {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .card-text {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .contact-action-link {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-terracotta);
+    font-weight: 500;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .contact-action-link:hover {
+    color: var(--accent-terracotta-hover);
+    text-decoration: underline;
+  }
+
+  .pgp-code {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    background-color: #eee7d7;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    border: 1px solid var(--border-muted);
+    word-break: break-all;
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 2.2rem;
+    }
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,249 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchiveCard from '../components/ArchiveCard.astro';
+import ArchiveTimeline from '../components/ArchiveTimeline.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const entryCount = sortedPosts.length;
+---
+
+<BaseLayout
+  title="Archive — Thomas Miller"
+  description="A record of essays, notes, and observations on quiet technology and deliberate design."
+  currentPath="/archive"
+>
+  <div class="archive-page">
+    <!-- View Mode Switcher -->
+    <div class="view-controls">
+      <div class="view-toggle-bar">
+        <button id="view-timeline-btn" class="toggle-btn active" type="button" aria-pressed="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="2" x2="12" y2="22"></line>
+            <circle cx="12" cy="7" r="3" fill="currentColor"></circle>
+            <circle cx="12" cy="17" r="3" fill="currentColor"></circle>
+          </svg>
+          Timeline
+        </button>
+        <button id="view-cards-btn" class="toggle-btn" type="button" aria-pressed="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="7" rx="2"></rect>
+            <rect x="3" y="14" width="18" height="7" rx="2"></rect>
+          </svg>
+          Cards
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline View Container (Reference 3) -->
+    <section id="timeline-view-wrapper" class="view-wrapper active">
+      <header class="timeline-header">
+        <div class="timeline-title-row">
+          <h1 class="archive-title">Archive</h1>
+          <span class="entry-count-badge font-mono">{entryCount} entries</span>
+        </div>
+        <p class="archive-subtitle">
+          A record of essays, notes, and observations on quiet technology and deliberate design.
+        </p>
+      </header>
+
+      <div class="header-divider"></div>
+
+      <ArchiveTimeline posts={sortedPosts} />
+    </section>
+
+    <!-- Cards View Container (Reference 2) -->
+    <section id="cards-view-wrapper" class="view-wrapper">
+      <header class="cards-header text-center">
+        <span class="section-label">COLLECTED WRITING</span>
+        <h1 class="archive-title">Blog Archive</h1>
+        <p class="archive-subtitle centered">
+          Essays on quieter tools, attentive systems, and the texture of analog life.
+        </p>
+      </header>
+
+      <div class="cards-stack">
+        {sortedPosts.map((post) => (
+          <ArchiveCard post={post} />
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  const timelineBtn = document.getElementById('view-timeline-btn');
+  const cardsBtn = document.getElementById('view-cards-btn');
+  const timelineWrapper = document.getElementById('timeline-view-wrapper');
+  const cardsWrapper = document.getElementById('cards-view-wrapper');
+
+  function setView(mode: 'timeline' | 'cards') {
+    if (mode === 'timeline') {
+      timelineWrapper?.classList.add('active');
+      cardsWrapper?.classList.remove('active');
+      timelineBtn?.classList.add('active');
+      timelineBtn?.setAttribute('aria-pressed', 'true');
+      cardsBtn?.classList.remove('active');
+      cardsBtn?.setAttribute('aria-pressed', 'false');
+    } else {
+      cardsWrapper?.classList.add('active');
+      timelineWrapper?.classList.remove('active');
+      cardsBtn?.classList.add('active');
+      cardsBtn?.setAttribute('aria-pressed', 'true');
+      timelineBtn?.classList.remove('active');
+      timelineBtn?.setAttribute('aria-pressed', 'false');
+    }
+    localStorage.setItem('archive_view_preference', mode);
+  }
+
+  // Check URL query param or saved preference
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedView = urlParams.get('view');
+  const savedView = localStorage.getItem('archive_view_preference');
+
+  if (requestedView === 'cards' || (!requestedView && savedView === 'cards')) {
+    setView('cards');
+  } else {
+    setView('timeline');
+  }
+
+  timelineBtn?.addEventListener('click', () => setView('timeline'));
+  cardsBtn?.addEventListener('click', () => setView('cards'));
+</script>
+
+<style>
+  .archive-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  /* View toggle controls */
+  .view-controls {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .view-toggle-bar {
+    display: inline-flex;
+    background-color: var(--surface-paper);
+    border: 1px solid var(--border-muted);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: calc(var(--radius-sm) - 1px);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .toggle-btn:hover {
+    color: var(--text-primary);
+    background-color: rgba(138, 68, 35, 0.04);
+  }
+
+  .toggle-btn.active {
+    background-color: var(--bg-parchment);
+    color: var(--accent-terracotta);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(37, 32, 27, 0.06);
+  }
+
+  /* View wrappers */
+  .view-wrapper {
+    display: none;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .view-wrapper.active {
+    display: flex;
+  }
+
+  /* Timeline View Headers */
+  .timeline-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .timeline-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .archive-title {
+    font-family: var(--font-serif);
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+
+  .entry-count-badge {
+    font-size: 0.8125rem;
+    color: var(--text-subtle);
+  }
+
+  .archive-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 680px;
+  }
+
+  .header-divider {
+    height: 1px;
+    background-color: var(--border-muted);
+    width: 100%;
+  }
+
+  /* Cards View Headers */
+  .cards-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .text-center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .archive-subtitle.centered {
+    margin: 0 auto;
+    margin-top: 0.5rem;
+  }
+
+  .cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .archive-title {
+      font-size: 2.1rem;
+    }
+    .archive-subtitle {
+      font-size: 1.05rem;
+    }
+  }
+</style>

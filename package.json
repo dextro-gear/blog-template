@@ -1,0 +1,17 @@
+{
+  "name": "quiet-blog-template",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev --host",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.11",
+    "astro": "^5.4.2",
+    "typescript": "^5.7.3"
+  }
+}

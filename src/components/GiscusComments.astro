@@ -1,0 +1,179 @@
+---
+import { siteConfig } from '../config';
+
+const giscus = siteConfig.giscus;
+
+if (!giscus || !giscus.enabled) {
+  return null;
+}
+
+const isConfigured = Boolean(
+  giscus.repo && 
+  giscus.repoId && 
+  giscus.category && 
+  giscus.categoryId
+);
+
+const isDev = import.meta.env.DEV;
+---
+
+<section class="comments-section" aria-label="Comments and Discussion">
+  <div class="comments-header">
+    <span class="section-label">Responses & Discussion</span>
+    <span class="comments-note">Powered by GitHub Discussions</span>
+  </div>
+
+  {isConfigured ? (
+    <div class="giscus-paper-card paper-card">
+      <div class="giscus"></div>
+      <script
+        is:inline
+        src="https://giscus.app/client.js"
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+        data-mapping={giscus.mapping || 'pathname'}
+        data-strict="0"
+        data-reactions-enabled={giscus.reactionsEnabled ? '1' : '0'}
+        data-emit-metadata={giscus.emitMetadata ? '1' : '0'}
+        data-input-position={giscus.inputPosition || 'bottom'}
+        data-theme={giscus.theme || 'noborder_light'}
+        data-lang={giscus.lang || 'en'}
+        data-loading={giscus.loading || 'lazy'}
+        crossorigin="anonymous"
+        async
+      ></script>
+    </div>
+  ) : isDev ? (
+    <div class="giscus-setup-guide paper-card">
+      <div class="setup-header">
+        <span class="setup-badge">Setup Needed</span>
+        <h3 class="setup-title">Giscus is enabled but not yet configured</h3>
+      </div>
+      <p class="setup-description">
+        To activate GitHub Discussions comments, obtain your repository details from
+        <a href="https://giscus.app" target="_blank" rel="noopener noreferrer" class="setup-link">giscus.app</a>
+        and update the <code>giscus</code> object in <code>src/config.ts</code>:
+      </p>
+      <pre class="setup-code"><code>{`giscus: {
+  enabled: true,
+  repo: "your-username/your-repo",
+  repoId: "R_...",
+  category: "Announcements",
+  categoryId: "DIC_...",
+  // ...
+}`}</code></pre>
+      <p class="setup-footer-note">
+        This banner is only visible in local development (<code>npm run dev</code>).
+      </p>
+    </div>
+  ) : null}
+</section>
+
+<style>
+  .comments-section {
+    margin-top: 3.5rem;
+    width: 100%;
+  }
+
+  .comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .comments-header .section-label {
+    margin-bottom: 0;
+  }
+
+  .comments-note {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  .giscus-paper-card {
+    padding: 2rem;
+    min-height: 180px;
+    background-color: var(--surface-paper);
+  }
+
+  /* Development setup helper */
+  .giscus-setup-guide {
+    padding: 1.75rem 2rem;
+    border-left: 3px solid var(--accent-terracotta);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .setup-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .setup-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-terracotta);
+  }
+
+  .setup-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .setup-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .setup-link {
+    color: var(--accent-terracotta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .setup-link:hover {
+    color: var(--accent-terracotta-hover);
+  }
+
+  .setup-code {
+    background-color: #242928;
+    color: #F2F3F0;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    overflow-x: auto;
+    border: 1px solid #3d4644;
+  }
+
+  .setup-footer-note {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  @media (max-width: 640px) {
+    .giscus-paper-card {
+      padding: 1.25rem;
+    }
+
+    .giscus-setup-guide {
+      padding: 1.25rem;
+    }
+  }
+</style>

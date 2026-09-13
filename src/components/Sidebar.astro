@@ -1,0 +1,288 @@
+---
+import { siteConfig } from '../config';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<aside class="sidebar">
+  <div class="sidebar-inner">
+    <!-- Brand / Site Title -->
+    <div class="brand">
+      <a href="/" class="brand-title">{siteConfig.siteName}</a>
+      <p class="brand-bio">{siteConfig.avatarBio}</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-section">
+      <span class="nav-label">NAVIGATION</span>
+      <ul class="nav-list">
+        {siteConfig.navLinks.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={['nav-link', { active: isActive(item.href) }]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<!-- Mobile Navigation Bar -->
+<header class="mobile-header">
+  <a href="/" class="mobile-brand-title">{siteConfig.siteName}</a>
+  <button id="mobile-menu-btn" class="mobile-toggle" aria-label="Toggle Navigation Menu">
+    <span class="menu-icon"></span>
+  </button>
+</header>
+
+<div id="mobile-drawer" class="mobile-drawer">
+  <div class="mobile-drawer-inner">
+    <p class="mobile-bio">{siteConfig.avatarBio}</p>
+    <div class="mobile-nav-label">NAVIGATION</div>
+    <ul class="mobile-nav-list">
+      <li><a href="/" class:list={['mobile-nav-link', { active: currentPath === '/' }]}>Home</a></li>
+      {siteConfig.navLinks.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={['mobile-nav-link', { active: isActive(item.href) }]}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  const toggleBtn = document.getElementById('mobile-menu-btn');
+  const drawer = document.getElementById('mobile-drawer');
+
+  if (toggleBtn && drawer) {
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = drawer.classList.toggle('is-open');
+      toggleBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
+</script>
+
+<style>
+  .sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-muted);
+    padding: 3.5rem 2.25rem;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.22;
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 0.85rem;
+    letter-spacing: -0.015em;
+  }
+
+  .brand-title:hover {
+    color: var(--accent-terracotta);
+  }
+
+  .brand-bio {
+    font-family: var(--font-serif);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-divider {
+    border: none;
+    border-top: 1px solid var(--border-muted);
+    margin: 0;
+  }
+
+  .nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent-terracotta);
+    margin-bottom: 1rem;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    padding: 0.2rem 0;
+    transition: color 0.15s ease, padding-left 0.15s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--accent-terracotta);
+    padding-left: 0.35rem;
+  }
+
+  .nav-link.active {
+    color: var(--accent-terracotta);
+    font-weight: 600;
+    border-bottom: 1.5px solid var(--accent-terracotta);
+    padding-bottom: 0.1rem;
+    width: fit-content;
+  }
+
+  /* Mobile Bar */
+  .mobile-header {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-muted);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .mobile-brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .mobile-toggle {
+    background: none;
+    border: 1px solid var(--border-muted);
+    border-radius: var(--radius-sm);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: var(--surface-paper);
+  }
+
+  .menu-icon {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background-color: var(--text-primary);
+    position: relative;
+  }
+
+  .menu-icon::before,
+  .menu-icon::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background-color: var(--text-primary);
+    left: 0;
+  }
+
+  .menu-icon::before { top: -5px; }
+  .menu-icon::after { top: 5px; }
+
+  .mobile-drawer {
+    display: none;
+    background-color: var(--surface-paper);
+    border-bottom: 1px solid var(--border-muted);
+    padding: 1.5rem;
+    position: sticky;
+    top: 61px;
+    z-index: 49;
+  }
+
+  .mobile-drawer.is-open {
+    display: block;
+  }
+
+  .mobile-bio {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .mobile-nav-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent-terracotta);
+    margin-bottom: 0.8rem;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .mobile-nav-link {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .mobile-nav-link.active {
+    color: var(--accent-terracotta);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar {
+      display: none;
+    }
+    .mobile-header {
+      display: flex;
+    }
+  }
+</style>

@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Now — Thomas Miller"
+  description="What I am writing, reading, and building right now."
+  currentPath="/now"
+>
+  <div class="now-page">
+    <header class="page-header">
+      <span class="section-label">CURRENT FOCUS</span>
+      <h1 class="page-title">Now</h1>
+      <p class="page-subtitle">
+        This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener" class="now-link">now page</a>, inspired by Derek Sivers. Last updated February 2025.
+      </p>
+    </header>
+
+    <div class="divider"></div>
+
+    <div class="prose content-section">
+      <h2>Writing</h2>
+      <p>
+        Drafting a monograph on <em>The Architecture of Quiet Interfaces</em>, exploring how the typography, layout constraints, and physical ergonomics of 19th-century printing presses can inform modern software environments.
+      </p>
+
+      <h2>Reading</h2>
+      <ul>
+        <li><em>The Craftsman</em> by Richard Sennett</li>
+        <li><em>The Nature and Art of Workmanship</em> by David Pye</li>
+        <li><em>Proust and the Squid: The Story and Science of the Reading Brain</em> by Maryanne Wolf</li>
+      </ul>
+
+      <h2>Analog Practice</h2>
+      <p>
+        Testing various iron gall inks on Tomoe River paper using a vintage Pelikan 400 with an oblique broad nib. Experimenting with handwritten commonplace books for long-term knowledge retention.
+      </p>
+
+      <h2>Digital Setup</h2>
+      <p>
+        Running a minimal Arch Linux workstation inside an aluminum enclosure with no case lighting. Text editing is handled through Neovim in a monochrome terminal without statusline clutter.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .now-page {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+  }
+
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+
+  .page-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .now-link {
+    color: var(--accent-terracotta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--border-muted);
+    margin: 2.5rem 0;
+  }
+
+  .content-section {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 2.2rem;
+    }
+  }
+</style>

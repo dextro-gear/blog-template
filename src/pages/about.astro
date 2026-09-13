@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About — Thomas Miller"
+  description="Background, philosophy, and the tools behind this quiet corner of the web."
+  currentPath="/about"
+>
+  <div class="about-page">
+    <header class="page-header">
+      <span class="section-label">BACKGROUND & PHILOSOPHY</span>
+      <h1 class="page-title">About</h1>
+      <p class="page-subtitle">
+        I am an essayist, interface designer, and researcher exploring the intersection of digital minimalism, calm software, and analog thinking tools.
+      </p>
+    </header>
+
+    <div class="divider"></div>
+
+    <div class="prose content-section">
+      <p>
+        For over a decade, I worked in commercial software product design. During that period, I observed an industry increasingly captivated by extractive metrics: monthly active users, notification velocity, and time-in-app.
+      </p>
+
+      <p>
+        <em>Many things one mind</em> is an inquiry into alternatives. What would computing feel like if tools were designed to be closed rather than perpetually scrolled? What if digital surfaces honored the tactile, quiet permanence of paper?
+      </p>
+
+      <h2>Core Design Convictions</h2>
+
+      <ul>
+        <li>
+          <strong>Quietness as a First Principle</strong>: Software should never speak unless spoken to. Ambient silence is the prerequisite for rigorous contemplation.
+        </li>
+        <li>
+          <strong>Tactile Restraint</strong>: Warm tones, visible negative space, and disciplined typography reduce optical strain and aesthetic anxiety.
+        </li>
+        <li>
+          <strong>Analog Complements</strong>: Digital tools excel at search, transmission, and indexing; physical tools excel at synthesis, memory retention, and deliberate composition. The healthy life balances both.
+        </li>
+      </ul>
+
+      <blockquote>
+        "The highest virtue of a tool is not its novelty, but how gracefully it steps out of the way when the human begins to think."
+      </blockquote>
+
+      <h2>Colophon</h2>
+
+      <p>
+        This site is published statically using <strong>Astro</strong>. The typographic hierarchy pairs <strong>Aleo</strong> for literary titles and body text with <strong>JetBrains Mono</strong> for dates, metadata, and code structures.
+      </p>
+
+      <p>
+        Color palettes are inspired by unbleached cotton rag paper, burnt sienna pigments, and iron gall ink. No trackers, telemetry scripts, or cookies are loaded on this domain.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+  }
+
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.015em;
+  }
+
+  .page-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--border-muted);
+    margin: 2.5rem 0;
+  }
+
+  .content-section {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 2.2rem;
+    }
+  }
+</style>

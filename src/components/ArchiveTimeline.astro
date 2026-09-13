@@ -1,0 +1,216 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, getYear } from '../utils/date';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+
+// Group posts by year
+const postsByYear = posts.reduce((acc, post) => {
+  const year = getYear(post.data.pubDate);
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, CollectionEntry<'blog'>[]>);
+
+const years = Object.keys(postsByYear).map(Number).sort((a, b) => b - a);
+---
+
+<div class="timeline-container">
+  {years.map((year) => (
+    <div class="timeline-year-group">
+      <div class="timeline-year-col">
+        <span class="year-label">{year}</span>
+      </div>
+
+      <div class="timeline-entries-col">
+        {postsByYear[year].map((post) => (
+          <div class="timeline-entry">
+            <!-- Timeline dot -->
+            <div class="timeline-marker">
+              <span class="timeline-dot"></span>
+            </div>
+
+            <!-- Content -->
+            <div class="entry-content">
+              <div class="entry-header">
+                <time datetime={post.data.pubDate.toISOString()} class="entry-date">
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <div class="entry-meta-right">
+                  <span class="badge-tag">{post.data.tag}</span>
+                  <span class="meta-sep">&bull;</span>
+                  <span class="read-time">{post.data.readTime}</span>
+                </div>
+              </div>
+
+              <h3 class="entry-title">
+                <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+              </h3>
+
+              <p class="entry-desc">{post.data.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    position: relative;
+  }
+
+  .timeline-year-group {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1.5rem;
+    position: relative;
+  }
+
+  .timeline-year-col {
+    padding-top: 0.2rem;
+  }
+
+  .year-label {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-terracotta);
+    letter-spacing: 0.04em;
+    display: inline-block;
+  }
+
+  .timeline-entries-col {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-left: 1px solid var(--border-muted);
+    padding-left: 2rem;
+  }
+
+  .timeline-entry {
+    position: relative;
+    padding-bottom: 2.25rem;
+    border-bottom: 1px solid var(--border-muted);
+    margin-bottom: 2.25rem;
+  }
+
+  .timeline-entry:last-child {
+    border-bottom: 1px solid var(--border-muted);
+    margin-bottom: 0;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -2rem;
+    top: 0.4rem;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timeline-dot {
+    width: 9px;
+    height: 9px;
+    background-color: var(--accent-terracotta);
+    border-radius: 50%;
+    display: block;
+    box-shadow: 0 0 0 3px var(--bg-parchment);
+  }
+
+  .entry-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .entry-date {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-subtle);
+    letter-spacing: 0.02em;
+  }
+
+  .entry-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  .meta-sep {
+    color: var(--text-subtle);
+  }
+
+  .read-time {
+    color: var(--text-subtle);
+  }
+
+  .entry-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-primary);
+  }
+
+  .entry-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .entry-title a:hover {
+    color: var(--accent-terracotta);
+  }
+
+  .entry-desc {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    max-width: 650px;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-year-group {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .timeline-entries-col {
+      padding-left: 1.5rem;
+    }
+
+    .timeline-marker {
+      left: -1.5rem;
+    }
+
+    .entry-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+  }
+</style>
